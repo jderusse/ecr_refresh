@@ -2,12 +2,13 @@
 
 usage ()
 {
-  echo 'Usage : docker service create \
-       --name ecr_refresh \
-       --mount type=bind,src=/var/run/docker.sock:/var/run/docker.sock \
-       --mount type=bind,src=/home/docker/.docker/config.json:/root/.docker/config.json \
+  echo 'usage: docker service create \
+       --name refresh_token \
+       --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock,readonly=false \
+       --mount type=bind,source=/home/docker,target=/home/docker,readonly=false \
        --mode global \
-       jderusse/ecr_refresh \
+       --user docker \
+       jderusse/ecr_refresh:latest \
        eu-west-1 [ registry-id1 registry-id2]'
   exit 1
 }
