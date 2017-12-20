@@ -7,7 +7,7 @@ usage ()
        --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock,readonly=false \
        --mount type=bind,source=/home/docker,target=/home/docker,readonly=false \
        --mode global \
-       --user docker \
+       --detach false \
        jderusse/ecr_refresh:latest \
        eu-west-1 [ registry-id1 registry-id2]'
   exit 1
