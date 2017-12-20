@@ -17,19 +17,17 @@ if [ "$#" -lt 1 ]; then
   usage
 fi
 
-docker version > /dev/null
-if [ $? -ne 0 ]; then
-  usage
+USER=host
+GROUP_ID=$(stat -c '%g' /home/docker)
+USER_ID=$(stat -c '%u' /home/docker)
+if [ ! $(getent group ${GROUP_ID}) ]; then
+  groupadd -g ${GROUP_ID} ${USER}
 fi
 
-region=$1
-shift
+if [ ! $(getent passwd ${USER_ID}) ]; then
+  useradd -u ${USER_ID} -g ${GROUP_ID} -K UID_MAX=9999999999 --home-dir /home/docker ${USER}
+fi
 
-while true; do
-  if [ "$#" -gt 0 ]; then
-    $(aws ecr get-login --no-include-email --region $region --registry-ids "$@")
-  else
-    $(aws ecr get-login --no-include-email --region $region)
-  fi
-  sleep 14400
-done
+usermod -aG ${GROUP_ID} ${USER}
+
+su-exec ${USER} run.sh "$@"
